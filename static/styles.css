@@ -32,6 +32,12 @@ h1 {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.parameter:hover {
+    background-color: #555; /* Change background color on hover */
 }
 
 .parameter h2 {
