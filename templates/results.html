@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Results</title>
+    <link rel="stylesheet" href="./static/styles.css"> <!-- Linking to external CSS file -->
+    <style>
+        .graph-bar {
+            height: 20px;
+            background-color: #ffa500;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+
+        .parameter p {
+            margin: 0;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Survey Results</h1>
+        <div class="survey-parameters">
+            {% for parameter in parameters %}
+            <div class="parameter" id="{{ parameter }}">
+                <h2>{{ parameter['name'] }}</h2>
+                <div class="graph-bar" style="width: {{ parameter['value'] }}%;"></div>
+                <p>{{ parameter['value'] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

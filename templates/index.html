@@ -4,22 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey Results</title>
-    <link rel="stylesheet" href="/static/styles.css"> <!-- Linking to external CSS file -->
+    <link rel="stylesheet" href="./static/styles.css"> <!-- Linking to external CSS file -->
 </head>
 <body>
     <div class="container">
         <h1>Survey Results</h1>
         <div class="survey-parameters">
-            <div class="parameter">
+            <div class="parameter" id="parameter1">
                 <h2>Parameter 1</h2>
                 <p>{{ parameter1 }}</p> <!-- Dynamic content pulled from the database -->
             </div>
-            <div class="parameter">
+            <div class="parameter" id="parameter2">
                 <h2>Parameter 2</h2>
                 <p>{{ parameter2 }}</p> <!-- Dynamic content pulled from the database -->
             </div>
             <!-- Add more parameters as needed -->
         </div>
     </div>
+
+    <!-- Loading indicator -->
+    <div id="loading" style="display: none;">
+        <p>Loading...</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const parameters = document.querySelectorAll('.parameter');
+            parameters.forEach(parameter => {
+                parameter.addEventListener('click', function() {
+                    // Show loading indicator
+                    document.getElementById('loading').style.display = 'block';
+                    submitAnswer(parameter.id);
+                });
+            });
+        });
+    
+        function submitAnswer(parameterId) {
+            fetch('/vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ parameter: parameterId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Redirect to results page after vote submission
+                window.location.href = '/results';
+            })
+            .catch(error => console.error('Error:', error))
+            .finally(() => {
+                // Hide loading indicator
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+    </script>
+    
 </body>
 </html>
