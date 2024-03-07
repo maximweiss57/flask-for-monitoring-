@@ -60,7 +60,7 @@ deploy_mongodb_cluster() {
 
 deploy_app() {
     log "Deploying Flask application"
-    kubectl apply ~/flask-for-monitoring/yamls/flask-app.yaml || handle_error "Failed to deploy Flask application"
+    kubectl apply -f ~/flask-for-monitoring/yamls/flask-app.yaml || handle_error "Failed to deploy Flask application"
     log "Flask application deployed successfully"
 }
 
