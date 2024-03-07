@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo
+        args:
+        - --config=/etc/mongo/mongo.conf
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: config
+          mountPath: /etc/mongo
+      volumes:
+      - name: config
+        configMap:
+          name: mongodb-cluster-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
