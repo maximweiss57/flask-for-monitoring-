@@ -66,6 +66,10 @@ deploy_app() {
 
 read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (single/cluster) " mongodb_deployment
 
+
+install_dependencies
+create_cluster
+
 # Deploy MongoDB based on user's choice
 if [ "$mongodb_deployment" = "single" ]; then
     deploy_single_mongodb
@@ -75,9 +79,6 @@ else
     handle_error "Invalid MongoDB deployment choice"
 fi
 
-install_dependencies
-create_cluster
-deploy_mongodb_cluster
 deploy_app
 
 # Expose Flask application with external IP
