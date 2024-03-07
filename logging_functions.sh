@@ -1,8 +1,7 @@
 #!/bin/bash 
 # Function to log messages
 log() {
-    file -d /var/log/flask-monitoring
-    if $? -ne 0; then
+    if ! test -d /var/log/flask-monitoring; then
         mkdir -p /var/log/flask-monitoring
     fi
     local message="$1"
