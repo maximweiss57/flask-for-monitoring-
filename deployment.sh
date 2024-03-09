@@ -52,7 +52,7 @@ install_dependencies() {
 
 create_cluster() {
     log "Creating KinD cluster"
-    kind create cluster --name monitoring-cluster || handle_error "Failed to create KinD cluster"
+    kind create cluster --config ~/flask-for-monitoring/yamls/kind.yaml --name monitoring-cluster || handle_error "Failed to create KinD cluster"
     log "KinD cluster created successfully"
 }
 
