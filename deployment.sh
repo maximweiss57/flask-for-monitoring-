@@ -45,7 +45,7 @@ install_dependencies() {
     docker build -t flask-for-monitoring-image ~/flask-for-monitoring || handle_error "Failed to build Flask application Docker image"
 
     # Pull Mongo image
-    docker pull mongo:4 || handle_error "Failed to pull Mongo image"
+    docker pull mongo:4.0 || handle_error "Failed to pull Mongo image"
 
     log "Dependencies installed successfully"
 }
@@ -101,3 +101,4 @@ log "Exposing Flask application with external IP"
 kubectl apply -f ~/flask-for-monitoring/yamls/flask-app-service.yaml || handle_error "Failed to create Flask app service"
 external_ip=$(kubectl get service flask-app-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 log "The deployment is complete, Flask application is accessible at http://$external_ip"
+echo "The deployment is complete, Flask application is accessible at http://$external_ip"
