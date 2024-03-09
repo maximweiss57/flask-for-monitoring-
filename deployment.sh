@@ -57,7 +57,7 @@ create_cluster() {
 }
 
 Load_image_to_cluster(){
-    kind load docker-image flask-for-monitoring-image --name monitoring-cluster
+    docker push localhost:5000/flask-for-monitoring-image
 }
 # Function to deploy single MongoDB instance
 deploy_single_mongodb() {
