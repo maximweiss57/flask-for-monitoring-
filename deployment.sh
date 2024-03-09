@@ -75,6 +75,16 @@ deploy_mongodb_cluster() {
 
 deploy_app() {
     log "Deploying Flask application"
+    log "Saving Flask application Docker image to tar file"
+    docker save flask-for-monitoring-image > ~/flask-for-monitoring-image.tar || handle_error "Failed to save Flask application Docker image to tar file"
+
+    log "Loading Flask application Docker image on Kubernetes nodes"
+    nodes=$(kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}')
+    for node in $nodes; do
+        ssh $node "docker load < ~/flask-for-monitoring-image.tar" || handle_error "Failed to load Flask application Docker image on node $node"
+    done
+
+    sed -i 's|image: localhost:5000/flask-for-monitoring-image|image: flask-for-monitoring-image|' ~/flask-for-monitoring/yamls/flask-app.yaml
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app.yaml || handle_error "Failed to deploy Flask application"
     log "Flask application deployed successfully"
 }
