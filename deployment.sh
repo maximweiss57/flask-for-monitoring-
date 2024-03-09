@@ -45,7 +45,7 @@ install_dependencies() {
     docker build -t flask-for-monitoring-image ~/flask-for-monitoring || handle_error "Failed to build Flask application Docker image"
 
     # Pull Mongo image
-    docker pull mongo:4.0 || handle_error "Failed to pull Mongo image"
+    docker pull mongo:4 || handle_error "Failed to pull Mongo image"
 
     log "Dependencies installed successfully"
 }

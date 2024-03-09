@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: mongo
+        image: mongo:4
         args:
         - --config=/etc/mongo/mongo.conf
         ports:
