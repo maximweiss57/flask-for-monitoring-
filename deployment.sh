@@ -87,6 +87,7 @@ read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (
 
 install_dependencies
 create_cluster
+Load_image_to_cluster
 
 # Deploy MongoDB based on user's choice
 if [ "$mongodb_deployment" = "single" ]; then
