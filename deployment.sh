@@ -41,7 +41,7 @@ install_dependencies() {
     dnf install -y helm || handle_error "Failed to install Helm"
 
     # Clone and dockerize app
-    git clone https://github.com/maximweiss57/falsk-for-monitoring-.git ~/flask-for-monitoring || handle_error "Failed to clone Flask application repository"
+    git clone https://github.com/maximweiss57/flask-for-monitoring-.git ~/flask-for-monitoring || handle_error "Failed to clone Flask application repository"
     docker build -t flask-for-monitoring-image ~/flask-for-monitoring || handle_error "Failed to build Flask application Docker image"
 
     # Pull Mongo image
@@ -57,7 +57,7 @@ create_cluster() {
 }
 
 Load_image_to_cluster(){
-kind load docker-image flask-for-monitoring-image --name monitoring-cluster
+    kind load docker-image flask-for-monitoring-image --name monitoring-cluster
 }
 # Function to deploy single MongoDB instance
 deploy_single_mongodb() {
