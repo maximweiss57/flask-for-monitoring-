@@ -1,0 +1,49 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+containerdConfigPatches:
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
+    endpoint = ["http://kind-registry:5000"]
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.configs."localhost:5000".tls]
+    insecure_skip_verify = true
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.configs."localhost:5000".auth]
+    username = ""
+    password = ""
+    auth = ""
+    identitytoken = ""
+    refresh_token = ""
+containerd:
+  configPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri"]
+      sandbox_image = "registry.k8s.io/pause:3.6"
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+          endpoint = ["https://registry-1.docker.io"]
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
+      endpoint = ["http://127.0.0.1:5000"]
+portMappings:
+- containerPort: 5000
+  hostPort: 5000
+  listenAddress: "127.0.0.1"
+  protocol: TCP

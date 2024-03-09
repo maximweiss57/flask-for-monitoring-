@@ -52,12 +52,12 @@ install_dependencies() {
 
 create_cluster() {
     log "Creating KinD cluster"
-    kind create cluster --name monitoring-cluster || handle_error "Failed to create KinD cluster"
+    kind create cluster --config ~/flask-for-monitoring/yamls/kind.yaml --name monitoring-cluster || handle_error "Failed to create KinD cluster"
     log "KinD cluster created successfully"
 }
 
 Load_image_to_cluster(){
-    kind load docker-image flask-for-monitoring-image --name monitoring-cluster
+    docker push localhost:5000/flask-for-monitoring-image
 }
 # Function to deploy single MongoDB instance
 deploy_single_mongodb() {
