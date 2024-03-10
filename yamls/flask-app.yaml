@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: flask-for-monitoring-image
-        imagePullPolicy: Never
+        image: monitoring_app:latest
         ports:
         - containerPort: 5000
         env:
