@@ -81,15 +81,24 @@ deploy_app() {
 
 install_metaILB(){
     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
-    kubectl apply -f ~/flask-for-monitoring/yamls/metaILB.yaml
+    kubectl apply -f ~/flask-for-monitoring/yamls/mateILB.yaml
+}
+
+install_ingress(){
+    # Download the Nginx-Ingress Helm chart from the OCI registry and extract it
+    helm pull oci://ghcr.io/nginxinc/charts/nginx-ingress --untar --version 1.1.3
+    # Apply Custom Resource Definitions (CRDs) required by Nginx-Ingress
+    kubectl apply -f nginx-ingress/crds/
+    # Install Nginx-Ingress using Helm
+    helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.1.3
 }
 
 read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (single/cluster) " mongodb_deployment
 
-
 install_dependencies
 create_cluster
-
+install_metaILB
+install_ingress
 # Deploy MongoDB based on user's choice
 if [ "$mongodb_deployment" = "single" ]; then
     deploy_single_mongodb
@@ -103,7 +112,5 @@ deploy_app
 
 # Expose Flask application with external IP
 log "Exposing Flask application with external IP"
-kubectl apply -f ~/flask-for-monitoring/yamls/flask-app-service.yaml || handle_error "Failed to create Flask app service"
-external_ip=$(kubectl get service flask-app-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 log "The deployment is complete, Flask application is accessible at http://$external_ip"
 echo "The deployment is complete, Flask application is accessible at http://$external_ip"

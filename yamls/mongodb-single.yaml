@@ -27,3 +27,8 @@ spec:
     app: mongodb
   ports:
   - port: 27017
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring-app-mongo
