@@ -81,7 +81,7 @@ deploy_app() {
 
 install_metaILB(){
     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
-    kubectl apply -f metallb-config.yaml
+    kubectl apply -f ~/flask-for-monitoring/yamls/metaILB.yaml
 }
 
 read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (single/cluster) " mongodb_deployment
