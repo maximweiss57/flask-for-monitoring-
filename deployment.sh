@@ -52,14 +52,6 @@ install_dependencies() {
 create_cluster() {
     log "Creating KinD cluster"
     kind create cluster --name monitoring-cluster || handle_error "Failed to create KinD cluster"
-    log "Creating local Docker registry"
-    kubectl create -n kube-system deployment registry --image=registry:2 || handle_error "Failed to create local Docker registry"
-    kubectl expose -n kube-system deployment registry --port=5000 --target-port=5000 --name=registry || handle_error "Failed to expose local Docker registry"
-    # Get the local registry IP
-    registry_ip=$(kubectl get service registry -n kube-system -o jsonpath='{.spec.clusterIP}')
-    # Tag and push the image to the local registry
-    docker tag flask-for-monitoring-image:latest "${registry_ip}:5000/flask-for-monitoring-image:latest" || handle_error "Failed to tag Flask application Docker image"
-    docker push "${registry_ip}":5000/flask-for-monitoring-image:latest || handle_error "Failed to push Flask application Docker image to local registry"
     log "KinD cluster created successfully"
 }
 
@@ -85,6 +77,11 @@ deploy_app() {
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app.yaml || handle_error "Failed to deploy Flask application"
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app-service.yaml || handle_error "Failed to create Flask app service"
     log "Flask application deployed successfully"
+}
+
+install_metaILB(){
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
+    kubectl apply -f metallb-config.yaml
 }
 
 read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (single/cluster) " mongodb_deployment

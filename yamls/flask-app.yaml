@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: hixs/monitoring_app
+        image: hixs/monitoring_app:latest
         ports:
         - containerPort: 5000
         env:
