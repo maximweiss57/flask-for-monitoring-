@@ -52,6 +52,7 @@ install_dependencies() {
 create_cluster() {
     log "Creating KinD cluster"
     kind create cluster --name monitoring-cluster || handle_error "Failed to create KinD cluster"
+    kubectl apply -f ~/flask-for-monitoring/yamls/namespace.yaml || handle_error "Failed to create namespace"
     log "KinD cluster created successfully"
 }
 
@@ -80,8 +81,8 @@ deploy_app() {
 }
 
 install_metaILB(){
-    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
-    kubectl apply -f ~/flask-for-monitoring/yamls/mateILB.yaml
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml || handle_error "Failed to install MetalLB"
+    kubectl apply -f ~/flask-for-monitoring/yamls/metalLB.yaml || handle_error "Failed to install MetalLB"
 }
 
 install_ingress(){
