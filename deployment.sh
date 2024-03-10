@@ -75,16 +75,18 @@ deploy_mongodb_cluster() {
 
 deploy_app() {
     log "Deploying Flask application"
+    kubectl apply -f ~/flask-for-monitoring/yamls/namespace.yaml || handle_error "Failed to create monitoring namespace"
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app.yaml || handle_error "Failed to deploy Flask application"
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app-service.yaml || handle_error "Failed to create Flask app service"
     log "Flask application deployed successfully"
 }
 
-#install_metalLB(){
-    # Install MetalLB
-    #kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml || handle_error "Failed to install MetalLB"
-    #kubectl apply -f /root/flask-for-monitoring/yamls/metalLB.yaml || handle_error "Failed to install MetalLB"
-#}
+install_metalLB(){
+    #Install MetalLB
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml || handle_error "Failed to install MetalLB"
+    kubectl wait --for=condition=available --timeout=600s deployment/controller -n metallb-system || handle_error "Failed to install MetalLB"
+    kubectl apply -f /root/flask-for-monitoring/yamls/metalLB.yaml || handle_error "Failed to install MetalLB"
+}
 
 install_ingress(){
     # Download the Nginx-Ingress Helm chart from the OCI registry and extract it
@@ -99,8 +101,7 @@ read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (
 
 install_dependencies
 create_cluster
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml || handle_error "Failed to install MetalLB"
-kubectl apply -f /root/flask-for-monitoring/yamls/metalLB.yaml || handle_error "Failed to install MetalLB"
+install_metalLB
 install_ingress
 # Deploy MongoDB based on user's choice
 if [ "$mongodb_deployment" = "single" ]; then
