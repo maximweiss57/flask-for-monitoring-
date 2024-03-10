@@ -81,8 +81,8 @@ deploy_app() {
 }
 
 install_metalLB(){
-    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
-    kubectl apply -f ~/flask-for-monitoring/yamls/metalLB.yaml || handle_error "Failed to install MetalLB"
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml || handle_error "Failed to install MetalLB"
+    kubectl apply -f /root/flask-for-monitoring/yamls/metalLB.yaml || handle_error "Failed to install MetalLB"
 }
 
 install_ingress(){
