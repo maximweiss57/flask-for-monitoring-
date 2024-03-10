@@ -42,8 +42,7 @@ install_dependencies() {
 
     # Clone and dockerize app
     git clone https://github.com/maximweiss57/flask-for-monitoring-.git ~/flask-for-monitoring || handle_error "Failed to clone Flask application repository"
-    docker build -t flask-for-monitoring-image ~/flask-for-monitoring || handle_error "Failed to build Flask application Docker image"
-    docker tag flask-for-monitoring-image:latest localhost:5000/flask-for-monitoring-image:latest || handle_error "Failed to tag Flask application Docker image"
+    docker pull hixs/monitoring_app:latest || handle_error "Failed to pull Flask application Docker image"
     # Pull Mongo image
     docker pull mongo:4 || handle_error "Failed to pull Mongo image"
 
