@@ -52,13 +52,18 @@ install_dependencies() {
 
 create_cluster() {
     log "Creating KinD cluster"
-    kind create cluster --config ~/flask-for-monitoring/yamls/kind.yaml --name monitoring-cluster || handle_error "Failed to create KinD cluster"
+    kind create cluster --name monitoring-cluster || handle_error "Failed to create KinD cluster"
+    log "Creating local Docker registry"
+    kubectl create -n kube-system deployment registry --image=registry:2 || handle_error "Failed to create local Docker registry"
+    kubectl expose -n kube-system deployment registry --port=5000 --target-port=5000 --name=registry || handle_error "Failed to expose local Docker registry"
+    # Get the local registry IP
+    registry_ip=$(kubectl get service registry -n kube-system -o jsonpath='{.spec.clusterIP}')
+    # Tag and push the image to the local registry
+    docker tag flask-for-monitoring-image:latest "${registry_ip}:5000/flask-for-monitoring-image:latest" || handle_error "Failed to tag Flask application Docker image"
+    docker push "${registry_ip}":5000/flask-for-monitoring-image:latest || handle_error "Failed to push Flask application Docker image to local registry"
     log "KinD cluster created successfully"
 }
 
-Load_image_to_cluster(){
-    docker push localhost:5000/flask-for-monitoring-image:latest || handle_error "Failed to push Flask application Docker image to local registry"
-}
 # Function to deploy single MongoDB instance
 deploy_single_mongodb() {
     log "Deploying single MongoDB instance"
@@ -88,7 +93,6 @@ read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (
 
 install_dependencies
 create_cluster
-Load_image_to_cluster
 
 # Deploy MongoDB based on user's choice
 if [ "$mongodb_deployment" = "single" ]; then
