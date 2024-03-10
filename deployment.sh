@@ -40,7 +40,7 @@ install_dependencies() {
     # Install Helm
     dnf install -y helm || handle_error "Failed to install Helm"
 
-    # Clone and dockerize app
+    # Clone app
     git clone https://github.com/maximweiss57/flask-for-monitoring-.git ~/flask-for-monitoring || handle_error "Failed to clone Flask application repository"
     docker pull hixs/monitoring_app:latest || handle_error "Failed to pull Flask application Docker image"
     # Pull Mongo image
@@ -50,10 +50,10 @@ install_dependencies() {
 }
 
 create_cluster() {
-    log "Creating KinD cluster"
-    kind create cluster --name monitoring-cluster || handle_error "Failed to create KinD cluster"
-    kubectl apply -f ~/flask-for-monitoring/yamls/namespace.yaml || handle_error "Failed to create namespace"
-    log "KinD cluster created successfully"
+    # Downloading kind cluster configuration
+    wget https://gist.githubusercontent.com/purushothamkdr453/39e097ce8ea62efbf28d8badebcbf5dd/raw/eab80fba4afdab26a3a9398d5ba59d383aad27ae/kind-single-controlplane-multiple-worker.yaml
+# Creating kind kubernetes cluster 
+    kind create cluster --config kind-single-controlplane-multiple-worker.yaml
 }
 
 # Function to deploy single MongoDB instance
@@ -80,8 +80,8 @@ deploy_app() {
     log "Flask application deployed successfully"
 }
 
-install_metaILB(){
-    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml || handle_error "Failed to install MetalLB"
+install_metalLB(){
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
     kubectl apply -f ~/flask-for-monitoring/yamls/metalLB.yaml || handle_error "Failed to install MetalLB"
 }
 
@@ -98,7 +98,7 @@ read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (
 
 install_dependencies
 create_cluster
-install_metaILB
+install_metalLB
 install_ingress
 # Deploy MongoDB based on user's choice
 if [ "$mongodb_deployment" = "single" ]; then
