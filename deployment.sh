@@ -80,13 +80,11 @@ deploy_app() {
     log "Flask application deployed successfully"
 }
 
-install_metalLB(){
+#install_metalLB(){
     # Install MetalLB
-    ll
     #kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml || handle_error "Failed to install MetalLB"
-    ls
     #kubectl apply -f /root/flask-for-monitoring/yamls/metalLB.yaml || handle_error "Failed to install MetalLB"
-}
+#}
 
 install_ingress(){
     # Download the Nginx-Ingress Helm chart from the OCI registry and extract it
@@ -101,7 +99,8 @@ read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (
 
 install_dependencies
 create_cluster
-install_metalLB
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml || handle_error "Failed to install MetalLB"
+kubectl apply -f /root/flask-for-monitoring/yamls/metalLB.yaml || handle_error "Failed to install MetalLB"
 install_ingress
 # Deploy MongoDB based on user's choice
 if [ "$mongodb_deployment" = "single" ]; then
