@@ -55,6 +55,9 @@ create_cluster() {
 # Creating kind kubernetes cluster 
     kind create cluster --config kind-single-controlplane-multiple-worker.yaml
 }
+create_namespace() {
+    kubectl apply -f ~/flask-for-monitoring/yamls/namespace.yaml || handle_error "Failed to create monitoring namespace"
+}
 
 # Function to deploy single MongoDB instance
 deploy_single_mongodb() {
@@ -75,7 +78,6 @@ deploy_mongodb_cluster() {
 
 deploy_app() {
     log "Deploying Flask application"
-    kubectl apply -f ~/flask-for-monitoring/yamls/namespace.yaml || handle_error "Failed to create monitoring namespace"
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app.yaml || handle_error "Failed to deploy Flask application"
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app-service.yaml || handle_error "Failed to create Flask app service"
     log "Flask application deployed successfully"
@@ -103,6 +105,7 @@ install_dependencies
 create_cluster
 install_metalLB
 install_ingress
+create_namespace
 # Deploy MongoDB based on user's choice
 if [ "$mongodb_deployment" = "single" ]; then
     deploy_single_mongodb
