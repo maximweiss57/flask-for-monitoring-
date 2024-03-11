@@ -19,5 +19,17 @@ spec:
         ports:
         - containerPort: 5000
         env:
-        - name: MONGODB_HOST
-          value: mongodb
+        - name: MONGO_HOST               # Environment variable for MongoDB host
+          value: "172.18.255.200"       # IP address of the MongoDB service
+        - name: MONGO_PORT               # Environment variable for MongoDB port
+          value: "27017"                 # Port MongoDB is listening on
+        - name: MONGO_INITDB_ROOT_USERNAME  # Environment variable for MongoDB root username
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret         # Name of the secret containing MongoDB username
+              key: username             # Key within the secret containing MongoDB username
+        - name: MONGO_INITDB_ROOT_PASSWORD  # Environment variable for MongoDB root password
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret         # Name of the secret containing MongoDB password
+              key: password             # Key within the secret containing MongoDB password
