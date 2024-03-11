@@ -3,9 +3,8 @@ kind: Ingress
 metadata:
   name: monitoring-ingress  
   namespace: monitoring-app          # Name of the Ingress resource   # Namespace where the Ingress belongs
-  annotations:
-    kubernetes.io/ingress.class: "nginx"  # Annotation specifying the Ingress class
 spec:
+  ingressClassName: nginx
   rules:
   - host: monitor-ortuser.ort.tamnun.inc  # Host for which the Ingress should route traffic
     http:
@@ -16,4 +15,4 @@ spec:
           service:
             name: flask-app-service     # Service to route traffic to
             port:
-              number:   80             # Port on the service to forward traffic to
+              number: 80            # Port on the service to forward traffic to

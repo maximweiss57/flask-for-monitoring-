@@ -80,6 +80,7 @@ deploy_app() {
     log "Deploying Flask application"
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app.yaml || handle_error "Failed to deploy Flask application"
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app-service.yaml || handle_error "Failed to create Flask app service"
+    kubectl apply -f ~/flask-for-monitoring/yamls/ingress.yaml || handle_error "Failed to install Ingress"
     log "Flask application deployed successfully"
 }
 
@@ -97,7 +98,6 @@ install_ingress(){
     kubectl apply -f nginx-ingress/crds/
     # Install Nginx-Ingress using Helm
     helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.1.3
-    kubectl apply -f ~/flask-for-monitoring/yamls/ingress.yaml || handle_error "Failed to install Ingress"
 }
 
 read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (single/cluster) " mongodb_deployment
