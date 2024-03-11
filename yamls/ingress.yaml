@@ -2,7 +2,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: monitoring-ingress  
-  namespace: monitoring-app          # Name of the Ingress resource   # Namespace where the Ingress belongs
+  namespace: monitoring-app   
+  annotations: 
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
