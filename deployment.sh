@@ -58,24 +58,13 @@ create_cluster() {
 create_namespace() {
     kubectl apply -f ~/flask-for-monitoring/yamls/namespace.yaml || handle_error "Failed to create monitoring namespace"
 }
-
-# Function to deploy single MongoDB instance
-deploy_single_mongodb() {
-    log "Deploying single MongoDB instance"
-    kubectl apply -f ~/flask-for-monitoring/yamls/mongodb-single.yaml || handle_error "Failed to deploy single MongoDB instance"
-    log "Single MongoDB instance deployed successfully"
+mongo_db(){
+    kubectl apply -f ~/flask-for-monitoring/yamls/mongo-pv.yaml || handle_error "Failed to deploy MongoDB"
+    kubectl apply -f ~/flask-for-monitoring/yamls/mongo-pvc.yaml || handle_error "Failed to create MongoDB service"
+    kubectl apply -f ~/flask-for-monitoring/yamls/mongo-secrets.yaml || handle_error "Failed to install MongoDB secrets"
+    kubectl apply -f ~/flask-for-monitoring/yamls/mongo-statefull.yaml || handle_error "Failed to install MongoDB statefulset"
+    kubectl apply -f ~/flask-for-monitoring/yamls/mongo-svc.yaml || handle_error "Failed to install MongoDB service"
 }
-
-# Function to deploy MongoDB cluster
-deploy_mongodb_cluster() {
-    log "Deploying MongoDB cluster"
-    # Create MongoDB replica set configuration
-    kubectl apply -f ~/flask-for-monitoring/yamls/mongodb-cluster-config.yaml || handle_error "Failed to create MongoDB replica set configuration"
-    # Create MongoDB deployment and service
-    kubectl apply -f ~/flask-for-monitoring/yamls/mongodb-cluster.yaml || handle_error "Failed to deploy MongoDB cluster"
-    log "MongoDB cluster deployed successfully"
-}
-
 deploy_app() {
     log "Deploying Flask application"
     kubectl apply -f ~/flask-for-monitoring/yamls/flask-app.yaml || handle_error "Failed to deploy Flask application"
@@ -100,22 +89,13 @@ install_ingress(){
     helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.1.3
 }
 
-read -p "Do you want to deploy a single MongoDB instance or a MongoDB cluster? (single/cluster) " mongodb_deployment
-
 install_dependencies
 create_cluster
 install_metalLB
 install_ingress
 create_namespace
 # Deploy MongoDB based on user's choice
-if [ "$mongodb_deployment" = "single" ]; then
-    deploy_single_mongodb
-elif [ "$mongodb_deployment" = "cluster" ]; then
-    deploy_mongodb_cluster
-else
-    handle_error "Invalid MongoDB deployment choice"
-fi
-
+mongo_db
 deploy_app
 
 # Expose Flask application with external IP

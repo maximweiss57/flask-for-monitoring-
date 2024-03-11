@@ -66,7 +66,7 @@ def create_app():
             # Create 'vote_results' collection if it doesn't exist
             mongo.create_collection('vote_results')
             # Initialize vote counts to 0 for each parameter
-            initial_parameters = ['parameter1', 'parameter2', 'parameter3']  # Add your parameters here
+            initial_parameters = ['putin', 'puting']  # Add your parameters here
             for param in initial_parameters:
                 mongo.vote_results.insert_one({"parameter": param, "count": 0})
     except Exception as e:
