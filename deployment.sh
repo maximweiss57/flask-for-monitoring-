@@ -89,6 +89,11 @@ install_ingress(){
     helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.1.3
 }
 
+# Get the external IP of the cluster and edit /etc/hosts
+get_and_set_ip() {
+external_ip=$(kubectl get svc mongo-db -n survey-app -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+}
+
 install_dependencies
 create_cluster
 install_metalLB
