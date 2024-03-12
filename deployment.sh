@@ -91,7 +91,7 @@ install_ingress(){
 
 # Get the external IP of the cluster and edit /etc/hosts
 
-external_ip=$(kubectl get svc mongo-db -n monitoring-app -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+external_ip=$(kubectl get svc nginx-ingress-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 install_dependencies 
 create_cluster
