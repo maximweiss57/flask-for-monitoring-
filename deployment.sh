@@ -90,20 +90,17 @@ install_ingress(){
 }
 
 # Get the external IP of the cluster and edit /etc/hosts
-get_and_set_ip() {
+get_ip() {
 external_ip=$(kubectl get svc mongo-db -n survey-app -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 }
 
-install_dependencies
+install_dependencies 
 create_cluster
+create_namespace
+mongo_db
 install_metalLB
 install_ingress
-create_namespace
-# Deploy MongoDB based on user's choice
-mongo_db
 deploy_app
-
-# Expose Flask application with external IP
-log "Exposing Flask application with external IP"
+get_ip
 log "The deployment is complete, Flask application is accessible at http://$external_ip"
 echo "The deployment is complete, Flask application is accessible at http://$external_ip"
