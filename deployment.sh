@@ -90,7 +90,7 @@ install_ingress(){
 }
 
 # Get the external IP of the cluster and edit /etc/hosts
-
+sleep 15s
 external_ip=$(kubectl get svc nginx-ingress-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 install_dependencies 
